@@ -1,24 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Home from './routes/Home';
+import Login from './routes/Login';
+import More from './routes/More';
+import Find from './routes/Find';
+import Chats from './routes/Chats';
+import Chatting from './routes/ChattingRoom';
+import Profile from './routes/Profile';
+import { onAuthStateChanged } from "firebase/auth";
+import { getAuth } from 'firebase/auth';
+import { useEffect, useState } from 'react';
+import { authService } from './fbase';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(authService.currentUser);
+  const [user, setUser] = useState(authService.currentUser);
+  
+  useEffect(() =>{
+    onAuthStateChanged(authService, (user) => {
+      if (user) {
+        setIsLoggedIn(user);
+        setUser(user);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+  },[user])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter basename={process.env.PUBLIC_URL}> 
+      <Routes>
+        { isLoggedIn ? (
+        <>
+        <Route index element={<Home user={user} />} />
+        <Route path='/Chats' element={<Chats />} />
+        <Route path='/Chatting' element={<Chatting />} />
+        <Route path='/Find' element={<Find />} />
+        <Route path='/More' element={<More />} />
+        <Route path='/Profile' element={<Profile />} />
+        </>
+        ) : (
+          <Route index element={<Login></Login>} />
+        )}
+      </Routes>
+    </BrowserRouter>
   );
 }
 
