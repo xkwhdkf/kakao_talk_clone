@@ -47,9 +47,6 @@ function Login() {
         case "auth/network-request-failed":
           message = "네트워크 연결에 실패 하였습니다.";
           break;
-        case "auth/invalid-email":
-          message = "잘못된 이메일 형식입니다.";
-          break;
         case "auth/internal-error":
           message = "잘못된 요청입니다.";
           break;
